@@ -24,12 +24,10 @@ const TasksPage = () => {
             const json = await response.json();
             setTasksList(json);
             console.log(json)
-            setIsLoading(false);
         } catch (error) {
             setError(error);
         }
 
-        setIsLoading(false);
     }
 
     const addTask = async (e) => {
@@ -52,13 +50,16 @@ const TasksPage = () => {
         }
     }
 
-    const editTask = async (e, id) => {
+    const editTask = async (id) => {
+        const idx = taksList.findIndexOf(item => item.id == id);
+        let task = taksList[idx];
+        setInput(task.task);
         try {
             const response = await fetch("http://localhost:4000/api/tasks", {
                 method: "Put",
                 body: {
                     id: id,
-                    task: e.target.value
+                    task: input
                 }
             });
             if (!response.ok) {
@@ -94,9 +95,8 @@ const TasksPage = () => {
     }
 
     useEffect(() => {
-        setIsLoading(true);
         fetchTasks();
-    }, [isUpdate]);
+    }, []);
 
     return (
         <>
@@ -124,7 +124,7 @@ const TasksPage = () => {
                                             <span>{task.task}</span>
                                         </div>
                                         <div>
-                                            <button>update</button>
+                                            <button onClick={editTask(i)}>update</button>
                                             <button onClick={deleteTask(i)} >delete</button>
                                         </div>
                                     </div>
